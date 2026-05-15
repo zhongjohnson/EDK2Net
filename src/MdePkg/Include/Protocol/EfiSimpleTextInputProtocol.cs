@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: MIT
 // EFI_SIMPLE_TEXT_INPUT_PROTOCOL — keyboard input (ConIn).
-
-namespace EDK2Net.Efi.Protocols;
+namespace EDK2Net.MdePkg.Protocol;
 
 using System.Runtime.InteropServices;
 

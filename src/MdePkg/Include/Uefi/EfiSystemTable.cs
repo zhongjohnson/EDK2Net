@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: MIT
 // EFI_SYSTEM_TABLE — root table passed to every UEFI image entry point.
 // Layout mirrors EDK2 MdePkg/Include/Uefi/UefiSpec.h.
+namespace EDK2Net.MdePkg.Uefi;
 
-namespace EDK2Net.Efi;
-
-using EDK2Net.Efi.Protocols;
+using EDK2Net.MdePkg.Protocol;
+using EDK2Net.ShellPkg.Protocol;
 using System.Runtime.InteropServices;
 
 [StructLayout(LayoutKind.Sequential)]
@@ -22,5 +22,5 @@ public unsafe struct EfiSystemTable
     public EfiRuntimeServices*       RuntimeServices;
     public EfiBootServices*          BootServices;
     public nuint                     NumberOfTableEntries;
-    public void*                     ConfigurationTable;  // EFI_CONFIGURATION_TABLE*
+    public EfiConfigurationTable*    ConfigurationTable;
 }

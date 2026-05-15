@@ -6,32 +6,55 @@ EDK2Net turns the .NET NativeAOT toolchain into a UEFI compiler: your C# program
 
 ## Repository layout
 
+The source tree mirrors the EDK2 package convention. Each top-level directory
+maps onto an EDK2 package; everything still compiles into the single
+`EDK2Net` assembly via `Compile Include` globs in `src/EDK2Net/EDK2Net.csproj`.
+
 ```
 EDK2Net/
 ├── build/
-│   ├── Uefi.props          # shared NativeAOT + UEFI linker settings
-│   └── run-qemu.ps1        # boot a built .efi in QEMU + OVMF
+│   ├── Uefi.props                              # shared NativeAOT + UEFI linker settings
+│   └── run-qemu.ps1                            # boot a built .efi in QEMU + OVMF
+├── MdePkg/                                     # MdePkg — core UEFI/PI definitions
+│   ├── Include/
+│   │   ├── Uefi/                               # EfiStatus, EfiGuid, EfiHandle, EfiTableHeader,
+│   │   │                                       # Char16, EfiBaseTypes, EfiSystemTable,
+│   │   │                                       # EfiBootServices, EfiRuntimeServices,
+│   │   │                                       # EfiConfigurationTable
+│   │   ├── Protocol/                           # SimpleTextInput/Output, LoadedImage,
+│   │   │                                       # DevicePath, SimpleFileSystem (+ File),
+│   │   │                                       # GraphicsOutput, BlockIo, DiskIo
+│   │   ├── Guid/                               # EfiGuids — well-known MdePkg GUIDs
+│   │   └── IndustryStandard/                   # Acpi (RSDP/XSDT/FADT/MADT), SmBios (2.x/3.x)
+│   └── Library/
+│       └── UefiLib/                            # UefiLib.cs — ergonomic helpers
+├── ShellPkg/                                   # ShellPkg — UEFI Shell protocols & GUIDs
+│   └── Include/
+│       ├── Protocol/                           # EfiShellParametersProtocol
+│       └── Guid/                               # ShellGuids (Shell, ShellParameters, ...)
 ├── src/
-│   └── EDK2Net/            # bindings library
-│       ├── Efi/            # core types & service tables
-│       │   ├── EfiStatus.cs
-│       │   ├── EfiGuid.cs
-│       │   ├── EfiHandle.cs
-│       │   ├── EfiTableHeader.cs
-│       │   ├── Char16.cs
-│       │   ├── EfiSystemTable.cs
-│       │   ├── EfiBootServices.cs
-│       │   ├── EfiRuntimeServices.cs
-│       │   └── Protocols/
-│       │       ├── EfiSimpleTextOutputProtocol.cs
-│       │       └── EfiSimpleTextInputProtocol.cs
+│   └── EDK2Net/                                # the .NET project that aggregates everything
+│       ├── EDK2Net.csproj                      # Compile Include="..\..\MdePkg\..." etc.
+│       ├── GlobalUsings.cs                     # global usings for MdePkg / ShellPkg namespaces
 │       └── Runtime/
-│           └── RuntimeStubs.cs   # memcpy/memset/__chkstk/...
+│           └── RuntimeStubs.cs                 # memcpy / memset / __chkstk / ...
 └── samples/
-    └── HelloUefi/          # minimal sample app
-        ├── HelloUefi.csproj
-        └── Program.cs
+    ├── HelloUefi/                              # minimal “Hello, UEFI” app
+    └── ListFiles/                              # enumerates the volume this image was loaded from
 ```
+
+### Namespace map
+
+| Directory                              | Namespace                              |
+|----------------------------------------|----------------------------------------|
+| `MdePkg/Include/Uefi`                  | `EDK2Net.MdePkg.Uefi`                  |
+| `MdePkg/Include/Protocol`              | `EDK2Net.MdePkg.Protocol`              |
+| `MdePkg/Include/Guid`                  | `EDK2Net.MdePkg.Guid`                  |
+| `MdePkg/Include/IndustryStandard`      | `EDK2Net.MdePkg.IndustryStandard`      |
+| `MdePkg/Library/UefiLib`               | `EDK2Net.MdePkg.Library.UefiLib`       |
+| `ShellPkg/Include/Protocol`            | `EDK2Net.ShellPkg.Protocol`            |
+| `ShellPkg/Include/Guid`                | `EDK2Net.ShellPkg.Guid`                |
+| `src/EDK2Net/Runtime`                  | `EDK2Net.Runtime`                      |
 
 ## Prerequisites
 
@@ -83,17 +106,42 @@ You should see `Hello, UEFI from C#!` on the UEFI console, then the app waits fo
 To add a new UEFI protocol:
 
 1. Find its definition in EDK2 (`MdePkg/Include/Protocol/...h`).
-2. Translate the struct to C# under `src/EDK2Net/Efi/Protocols/`, using `delegate* unmanaged<...>` for every function-pointer member. Preserve field order and offsets exactly.
-3. Add the protocol's GUID as a `public static readonly EfiGuid` constant.
+2. Translate the struct to C# under `MdePkg/Include/Protocol/` (or `ShellPkg/Include/Protocol/`
+   for shell protocols), using `delegate* unmanaged<...>` for every function-pointer
+   member. Preserve field order and offsets exactly. The file's namespace must
+   match its directory (e.g. `namespace EDK2Net.MdePkg.Protocol;`).
+3. Add the protocol's GUID as a `public static readonly EfiGuid` constant in
+   `MdePkg/Include/Guid/EfiGuids.cs` (or `ShellPkg/Include/Guid/ShellGuids.cs`).
 4. Locate the protocol at runtime with `BootServices->LocateProtocol`.
+
+## Samples
+
+| Sample      | Demonstrates                                                  |
+|-------------|---------------------------------------------------------------|
+| `HelloUefi` | `EfiMain`, `ConOut`, key wait                                 |
+| `ListFiles` | `LoadedImage` → `SimpleFileSystem` → `OpenVolume` → `Read`   |
+
+Build any sample with the same command, just changing the project path:
+
+```powershell
+dotnet publish .\samples\ListFiles\ListFiles.csproj -c Release -r win-x64
+.\build\run-qemu.ps1 -Image .\samples\ListFiles\bin\Release\net9.0\win-x64\publish\ListFiles.efi
+```
 
 ## Status & roadmap
 
 - [x] Core types (`EfiStatus`, `EfiGuid`, `EfiHandle`, `EfiTableHeader`, `Char16`)
-- [x] `SystemTable` / `BootServices` / `RuntimeServices`
-- [x] `SimpleTextOutput` / `SimpleTextInput`
-- [ ] `LoadedImage`, `DevicePath`, `SimpleFileSystem`, `File` protocols
-- [ ] `GraphicsOutput` (GOP)
+- [x] `SystemTable` / `BootServices` / `RuntimeServices` / `ConfigurationTable`
+- [x] Console: `SimpleTextOutput`, `SimpleTextInput`
+- [x] Image: `LoadedImage`, `DevicePath` (header + walk)
+- [x] Storage: `SimpleFileSystem`, `FileProtocol`, `FileInfo`, `BlockIo`, `DiskIo`
+- [x] Graphics: `GraphicsOutput` (GOP)
+- [x] Industry standards: ACPI (RSDP/XSDT/RSDT/FADT/MADT), SMBIOS 2.x + 3.x
+- [x] Shell: `EfiShellParametersProtocol` + GUIDs (read `argv` from UEFI Shell)
+- [x] Helper layer: `UefiLib` (Print, LocateProtocol, GetConfigurationTable, ...)
+- [ ] `EfiShellProtocol` deep binding
+- [ ] Network stack (`SimpleNetwork`, `Tcp4/6`, `Http`)
+- [ ] HII (Human Interface Infrastructure)
 - [ ] AArch64 (`/MACHINE:ARM64`) configuration
 
 ## License

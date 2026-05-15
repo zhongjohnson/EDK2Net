@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: MIT
 // EFI_TABLE_HEADER — common header for SystemTable / BootServices / RuntimeServices.
-
-namespace EDK2Net.Efi;
+namespace EDK2Net.MdePkg.Uefi;
 
 using System.Runtime.InteropServices;
 

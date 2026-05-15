@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
 		<TargetFramework>net9.0</TargetFramework>
@@ -19,5 +19,13 @@
 		<AssemblyName>EDK2Net</AssemblyName>
 		<Description>C# bindings for the UEFI/EDK2 environment (edk2-cs style).</Description>
 	</PropertyGroup>
+
+	<!--
+		Source layout mirrors the EDK2 package convention:
+				MdePkg/Include/{Uefi,Protocol,Guid,IndustryStandard}/*.cs
+				MdePkg/Library/UefiLib/*.cs
+				ShellPkg/Include/{Protocol,Guid}/*.cs
+		Everything still compiles into the single EDK2Net assembly.
+	-->
 
 </Project>

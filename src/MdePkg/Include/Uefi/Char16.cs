@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: MIT
 // CHAR16 — 16-bit UCS-2 character used everywhere in UEFI string APIs.
-
-namespace EDK2Net.Efi;
+namespace EDK2Net.MdePkg.Uefi;
 
 using System.Runtime.InteropServices;
 

@@ -4,8 +4,7 @@
 // opaque function pointers to preserve the correct offsets.
 //
 // Reference: MdePkg/Include/Uefi/UefiSpec.h, struct _EFI_BOOT_SERVICES.
-
-namespace EDK2Net.Efi;
+namespace EDK2Net.MdePkg.Uefi;
 
 using System.Runtime.InteropServices;
 

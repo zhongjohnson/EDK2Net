@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: MIT
 // EFI_RUNTIME_SERVICES — typed skeleton matching UEFI 2.x layout.
-
-namespace EDK2Net.Efi;
+namespace EDK2Net.MdePkg.Uefi;
 
 using System.Runtime.InteropServices;
 

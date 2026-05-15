@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: MIT
 // EFI_HANDLE and EFI_EVENT — opaque pointers.
-
-namespace EDK2Net.Efi;
+namespace EDK2Net.MdePkg.Uefi;
 
 using System;
 

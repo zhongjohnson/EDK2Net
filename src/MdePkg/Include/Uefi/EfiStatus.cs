@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: MIT
 // Core EFI scalar types. Mirror EDK2 MdePkg/Include/Uefi/UefiBaseType.h.
-
-namespace EDK2Net.Efi;
+namespace EDK2Net.MdePkg.Uefi;
 
 using System;
 

@@ -1,12 +1,11 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-	<!-- Pull in the shared UEFI/NativeAOT settings. -->
 	<Import Project="..\..\build\Uefi.props" />
 
 	<PropertyGroup>
 		<OutputType>Exe</OutputType>
-		<AssemblyName>HelloUefi</AssemblyName>
-		<RootNamespace>HelloUefi</RootNamespace>
+		<AssemblyName>ListFiles</AssemblyName>
+		<RootNamespace>ListFiles</RootNamespace>
 	</PropertyGroup>
 
 	<ItemGroup>

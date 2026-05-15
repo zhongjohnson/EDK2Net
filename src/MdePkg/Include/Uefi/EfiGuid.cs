@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: MIT
 // EFI_GUID — 128-bit GUID matching the EDK2 layout.
-
-namespace EDK2Net.Efi;
+namespace EDK2Net.MdePkg.Uefi;
 
 using System.Runtime.InteropServices;
 
