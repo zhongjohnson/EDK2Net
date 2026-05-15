@@ -5,6 +5,8 @@
   <Folder Name="/samples/">
     <Project Path="samples/HelloUefi/HelloUefi.csproj" />
     <Project Path="samples/ListFiles/ListFiles.csproj" />
+    <Project Path="samples/ShellArgs/ShellArgs.csproj" />
+    <Project Path="samples/MemMap/MemMap.csproj" />
   </Folder>
   <Folder Name="/build/">
     <File Path="build/Uefi.props" />

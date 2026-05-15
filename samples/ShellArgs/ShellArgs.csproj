@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<Import Project="..\..\build\Uefi.props" />
+
+	<PropertyGroup>
+		<OutputType>Exe</OutputType>
+		<AssemblyName>ShellArgs</AssemblyName>
+		<RootNamespace>ShellArgs</RootNamespace>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\..\src\EDK2Net\EDK2Net.csproj" />
+	</ItemGroup>
+
+</Project>
