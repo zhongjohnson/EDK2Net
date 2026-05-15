@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>net9.0</TargetFramework>
+		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+		<Nullable>enable</Nullable>
+		<LangVersion>latest</LangVersion>
+		<ImplicitUsings>disable</ImplicitUsings>
+
+		<!--
+			This library is consumed by UEFI applications. It contains only
+			blittable structs, enums, and function-pointer-shaped bindings.
+			It must NOT pull in the standard managed runtime APIs at runtime.
+		-->
+		<IsAotCompatible>true</IsAotCompatible>
+		<IsTrimmable>true</IsTrimmable>
+
+		<RootNamespace>EDK2Net</RootNamespace>
+		<AssemblyName>EDK2Net</AssemblyName>
+		<Description>C# bindings for the UEFI/EDK2 environment (edk2-cs style).</Description>
+	</PropertyGroup>
+
+</Project>

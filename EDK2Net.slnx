@@ -1,1 +1,12 @@
-<Solution />
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/EDK2Net/EDK2Net.csproj" />
+  </Folder>
+  <Folder Name="/samples/">
+    <Project Path="samples/HelloUefi/HelloUefi.csproj" />
+  </Folder>
+  <Folder Name="/build/">
+    <File Path="build/Uefi.props" />
+    <File Path="build/run-qemu.ps1" />
+  </Folder>
+</Solution>

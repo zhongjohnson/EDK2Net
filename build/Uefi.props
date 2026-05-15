@@ -1,0 +1,91 @@
+<Project>
+
+  <!--
+    Uefi.props
+    ==========
+    Shared MSBuild settings that turn a normal .NET NativeAOT executable into a
+    UEFI Application (PE32+, subsystem 10).
+
+    Importing project must:
+      * be an <OutputType>Exe</OutputType>
+      * target net9.0 (or newer) with PublishAot
+      * be published with: dotnet publish -r win-x64 -c Release
+  -->
+
+  <PropertyGroup>
+    <TargetFramework Condition=" '$(TargetFramework)' == '' ">net9.0</TargetFramework>
+    <RuntimeIdentifier Condition=" '$(RuntimeIdentifier)' == '' ">win-x64</RuntimeIdentifier>
+    <Platform Condition=" '$(Platform)' == '' ">x64</Platform>
+
+    <!-- NativeAOT + unsafe code -->
+    <PublishAot>true</PublishAot>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <Nullable>enable</Nullable>
+    <LangVersion>latest</LangVersion>
+
+    <!-- Strip everything we don't have in a UEFI environment -->
+    <InvariantGlobalization>true</InvariantGlobalization>
+    <StackTraceSupport>false</StackTraceSupport>
+    <UseSystemResourceKeys>true</UseSystemResourceKeys>
+    <DebuggerSupport>false</DebuggerSupport>
+    <EnableUnsafeBinaryFormatterSerialization>false</EnableUnsafeBinaryFormatterSerialization>
+    <EnableUnsafeUTF7Encoding>false</EnableUnsafeUTF7Encoding>
+    <EventSourceSupport>false</EventSourceSupport>
+    <HttpActivityPropagationSupport>false</HttpActivityPropagationSupport>
+    <MetadataUpdaterSupport>false</MetadataUpdaterSupport>
+    <IlcDisableReflection>true</IlcDisableReflection>
+    <IlcOptimizationPreference>Size</IlcOptimizationPreference>
+    <IlcFoldIdenticalMethodBodies>true</IlcFoldIdenticalMethodBodies>
+    <IlcGenerateStackTraceData>false</IlcGenerateStackTraceData>
+    <IlcDisableUnhandledExceptionExperience>true</IlcDisableUnhandledExceptionExperience>
+
+    <!-- We provide our own entry point, no CRT, no managed startup. -->
+    <NativeLib Condition=" '$(NativeLib)' == '' "></NativeLib>
+    <SelfContained>true</SelfContained>
+  </PropertyGroup>
+
+  <!--
+    Linker switches for the Microsoft linker (link.exe / lld-link).
+    SUBSYSTEM:EFI_APPLICATION  -> PE Subsystem = 10
+    ENTRY:EfiMain              -> the [UnmanagedCallersOnly(EntryPoint="EfiMain")] export
+    /NODEFAULTLIB              -> no CRT
+    /DYNAMICBASE:NO /FIXED     -> firmware loads us at the address we are loaded
+    /MERGE & /SECTION          -> typical EFI image hygiene (optional)
+  -->
+  <ItemGroup>
+    <LinkerArg Include="/SUBSYSTEM:EFI_APPLICATION" />
+    <LinkerArg Include="/ENTRY:EfiMain" />
+    <LinkerArg Include="/NODEFAULTLIB" />
+    <LinkerArg Include="/DYNAMICBASE:NO" />
+    <LinkerArg Include="/FIXED" />
+    <LinkerArg Include="/DEBUG:NONE" />
+    <LinkerArg Include="/OPT:REF" />
+    <LinkerArg Include="/OPT:ICF" />
+    <LinkerArg Include="/IGNORE:4210" />
+  </ItemGroup>
+
+  <!-- Hand the linker args to NativeAOT's linker invocation. -->
+  <Target Name="_AppendUefiLinkerArgs" BeforeTargets="IlcCompile;LinkNative">
+    <ItemGroup>
+      <LinkerArg Include="@(LinkerArg)" />
+    </ItemGroup>
+  </Target>
+
+  <!--
+    Rename the produced *.exe to *.efi after publish.
+    UEFI firmware traditionally loads files with the .efi extension.
+  -->
+  <Target Name="RenameToEfi" AfterTargets="Publish">
+    <PropertyGroup>
+      <_PublishedExe>$(PublishDir)$(AssemblyName).exe</_PublishedExe>
+      <_PublishedEfi>$(PublishDir)$(AssemblyName).efi</_PublishedEfi>
+    </PropertyGroup>
+    <Copy SourceFiles="$(_PublishedExe)"
+          DestinationFiles="$(_PublishedEfi)"
+          Condition="Exists('$(_PublishedExe)')"
+          OverwriteReadOnlyFiles="true"
+          SkipUnchangedFiles="false" />
+    <Message Importance="high" Text="UEFI image: $(_PublishedEfi)" Condition="Exists('$(_PublishedEfi)')" />
+  </Target>
+
+</Project>
