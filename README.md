@@ -1,6 +1,6 @@
 # EDK2Net
 
-C# bindings & build infrastructure for writing **UEFI applications in C#**, modeled on the [edk2-cs](https://github.com/) approach.
+C# bindings & build infrastructure for writing **UEFI applications in C#**.
 
 EDK2Net turns the .NET NativeAOT toolchain into a UEFI compiler: your C# program is published as a native PE32+ image with `Subsystem = EFI_APPLICATION`, calling the firmware-provided EFI services directly through function-pointer bindings — no managed runtime, no GC interactions in your hot path, no marshaling.
 
