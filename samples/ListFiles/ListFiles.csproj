@@ -9,7 +9,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\..\src\EDK2Net.csproj" />
+		<ProjectReference Include="..\..\src\EDK2Net\EDK2Net.csproj" />
 	</ItemGroup>
 
 </Project>

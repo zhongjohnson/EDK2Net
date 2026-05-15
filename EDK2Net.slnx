@@ -1,6 +1,6 @@
 <Solution>
   <Folder Name="/src/">
-    <Project Path="src/EDK2Net.csproj" />
+    <Project Path="src/EDK2Net/EDK2Net.csproj" />
   </Folder>
   <Folder Name="/samples/">
     <Project Path="samples/HelloUefi/HelloUefi.csproj" />

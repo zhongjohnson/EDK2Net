@@ -20,12 +20,4 @@
 		<Description>C# bindings for the UEFI/EDK2 environment (edk2-cs style).</Description>
 	</PropertyGroup>
 
-	<!--
-		Source layout mirrors the EDK2 package convention:
-				MdePkg/Include/{Uefi,Protocol,Guid,IndustryStandard}/*.cs
-				MdePkg/Library/UefiLib/*.cs
-				ShellPkg/Include/{Protocol,Guid}/*.cs
-		Everything still compiles into the single EDK2Net assembly.
-	-->
-
 </Project>
