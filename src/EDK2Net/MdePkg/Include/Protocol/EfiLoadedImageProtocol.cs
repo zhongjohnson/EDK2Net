@@ -14,7 +14,7 @@ public unsafe struct EfiLoadedImageProtocol
 
     // Source location of the image
     public EfiHandle DeviceHandle;
-    public void*     FilePath;      // EFI_DEVICE_PATH_PROTOCOL*
+    public EfiDevicePathProtocol* FilePath;
     public void*     Reserved;
 
     // Image's load options (command-line)

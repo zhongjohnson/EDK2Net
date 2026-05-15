@@ -19,7 +19,7 @@ using EDK2Net.ShellPkg.Guid;
 using EDK2Net.MdePkg.Protocol;
 using EDK2Net.ShellPkg.Protocol;
 using EDK2Net.MdePkg.IndustryStandard;
-public static unsafe class UefiLib
+public static unsafe partial class UefiLib
 {
     private static EfiSystemTable*    s_st;
     private static EfiHandle          s_imageHandle;

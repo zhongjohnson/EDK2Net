@@ -48,6 +48,33 @@ public static unsafe class Program
         if (s.IsSuccess)
         {
             UefiLib.PrintLine("Got EFI_LOADED_IMAGE_PROTOCOL.");
+
+            UefiLib.Print("  ImageBase = ");
+            UefiLib.PrintHex0x((ulong)loadedImage->ImageBase, minWidth: 16);
+            UefiLib.PrintLine("");
+
+            UefiLib.Print("  ImageSize = ");
+            UefiLib.PrintDec(loadedImage->ImageSize);
+            UefiLib.PrintLine(" bytes");
+
+            if (loadedImage->FilePath != null)
+            {
+                UefiLib.Print("  FilePath  = ");
+                UefiLib.PrintDevicePath(loadedImage->FilePath);
+                UefiLib.PrintLine("");
+            }
+        }
+
+        // Demo: read the platform's firmware time via Runtime Services.
+        if (UefiLib.GetTime(out var t).IsSuccess)
+        {
+            UefiLib.Print("Firmware time: ");
+            UefiLib.PrintDec((ulong)t.Year);   UefiLib.Print("-");
+            UefiLib.PrintDec((ulong)t.Month);  UefiLib.Print("-");
+            UefiLib.PrintDec((ulong)t.Day);    UefiLib.Print(" ");
+            UefiLib.PrintDec((ulong)t.Hour);   UefiLib.Print(":");
+            UefiLib.PrintDec((ulong)t.Minute); UefiLib.Print(":");
+            UefiLib.PrintDec((ulong)t.Second); UefiLib.PrintLine("");
         }
 
         UefiLib.PrintLine("Press any key to exit...");

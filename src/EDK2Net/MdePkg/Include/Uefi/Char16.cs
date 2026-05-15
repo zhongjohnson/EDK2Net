@@ -14,4 +14,12 @@ public readonly struct Char16
     public static implicit operator Char16(char c) => new(c);
     public static implicit operator char(Char16 c) => (char)c.Value;
     public static implicit operator ushort(Char16 c) => c.Value;
+
+    public static explicit operator Char16(ushort v) => new(v);
+    public static explicit operator Char16(int v)    => new((ushort)v);
+
+    public static bool operator ==(Char16 a, Char16 b) => a.Value == b.Value;
+    public static bool operator !=(Char16 a, Char16 b) => a.Value != b.Value;
+    public override bool Equals(object? obj) => obj is Char16 o && o.Value == Value;
+    public override int GetHashCode() => Value;
 }
