@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<TargetFramework>net9.0</TargetFramework>
+		<TargetFramework>net10.0</TargetFramework>
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 		<Nullable>enable</Nullable>
 		<LangVersion>latest</LangVersion>
@@ -11,7 +11,18 @@
 			This library is consumed by UEFI applications. It contains only
 			blittable structs, enums, and function-pointer-shaped bindings.
 			It must NOT pull in the standard managed runtime APIs at runtime.
+
+			Because its consumers (e.g. UefiOS.Boot) replace the CoreLib with
+			LiteBCL, EDK2Net must be compiled against that very same CoreLib.
+			Otherwise its metadata would reference the real System.Private.CoreLib
+			and the app would see two conflicting definitions of System.Object.
 		-->
+		<NoStdLib>true</NoStdLib>
+		<DisableImplicitFrameworkReferences>true</DisableImplicitFrameworkReferences>
+		<RuntimeMetadataVersion>v4.0.30319</RuntimeMetadataVersion>
+		<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+		<GenerateTargetFrameworkAttribute>false</GenerateTargetFrameworkAttribute>
+
 		<IsAotCompatible>true</IsAotCompatible>
 		<IsTrimmable>true</IsTrimmable>
 
@@ -19,5 +30,9 @@
 		<AssemblyName>EDK2Net</AssemblyName>
 		<Description>C# bindings for the UEFI/EDK2 environment (edk2-cs style).</Description>
 	</PropertyGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\..\..\LiteBCL\src\LiteBCL.CoreLib\LiteBCL.CoreLib.csproj" />
+	</ItemGroup>
 
 </Project>
